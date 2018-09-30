@@ -17,13 +17,29 @@ if __name__ == '__main__':
     illust_total_comments = 0
     each_illusts = []
 
+    each_years = {
+        "2018": [],
+        "2017": [],
+        "2016": [],
+        "2015": [],
+        "2014": [],
+        "2013": [],
+        "2012": [],
+        "2011": [],
+        "2010": [],
+        "2009": [],
+        "2008": []
+    }
+
     if len(args) > 3:
         api = AppPixivAPI()
         api.login(user_id, password)   # Not required
 
         json_result = api.user_illusts(user_num)
         for illust in json_result.illusts:
-            print(illust.keys())
+            print(illust.create_date.split('-')[0])
+            year = illust.create_date.split('-')[0]
+            each_years[year].append(illust.id)
 
             illust_count = illust_count + 1
             illust_total_view = illust_total_view + illust.total_view
@@ -51,6 +67,9 @@ if __name__ == '__main__':
                 next_result = api.user_illusts(**next_qs)
 
                 for illust in next_result.illusts:
+                    year = illust.create_date.split('-')[0]
+                    each_years[year].append(illust.id)
+
                     illust_count = illust_count + 1
                     illust_total_view = illust_total_view + illust.total_view
                     illust_total_bookmark = illust_total_bookmark + illust.total_bookmarks
@@ -72,6 +91,10 @@ if __name__ == '__main__':
             except Exception as e:
                 print("end")
                 flag = 1
+
+    for key, values in each_years.items():
+        print(str(key) + ":" + str(len(values)))
+
     print(illust_count)
     print(illust_total_view)
     print(illust_total_bookmark)
