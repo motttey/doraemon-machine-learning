@@ -103,9 +103,9 @@ if __name__ == '__main__':
             print(manga.create_date.split('-')[0])
             year = manga.create_date.split('-')[0]
 
-            # each_years[year].append(manga.id)
-            for page in manga.meta_pages:
-                each_years[year].append(page)
+            each_years[year].append(manga.id)
+            # for page in manga.meta_pages:
+            #     each_years[year].append(page)
 
             manga_count = manga_count + 1
             manga_total_view = manga_total_view + manga.total_view
@@ -135,9 +135,9 @@ if __name__ == '__main__':
                 for manga in next_result.illusts:
                     year = manga.create_date.split('-')[0]
 
-                    # each_years[year].append(manga.id)
-                    for page in manga.meta_pages:
-                        each_years[year].append(page)
+                    each_years[year].append(manga.id)
+                    # for page in manga.meta_pages:
+                    #    each_years[year].append(page)
 
                     manga_count = manga_count + 1
                     manga_total_view = manga_total_view + manga.total_view
