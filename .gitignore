@@ -105,6 +105,8 @@ venv.bak/
 
 # datasets
 /dd
+/doraimages_new
 
 # output image
 *.png
+/output_imgs
