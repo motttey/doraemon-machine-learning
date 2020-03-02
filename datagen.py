@@ -5,8 +5,8 @@ import numpy as np
 import os
 import glob
 
-input_dir = "dd/doraimages2"
-output_dir = "dd/doraimages_new/imgs3"
+input_dir = "dimg"
+output_dir = "doraimages_new2"
 
 files = glob.glob(input_dir + '/*.jpg')
 
@@ -21,15 +21,13 @@ for i, file in enumerate(files):
     x = np.expand_dims(x, axis=0)
 
     datagen = ImageDataGenerator(
-        rotation_range=45,
-        horizontal_flip=True,
-        width_shift_range=0.05,
-        zoom_range=[0.8, 1.1],
-        shear_range=0.1,
-        channel_shift_range=50,
-        brightness_range=[0.7, 1.0],
+        rotation_range=7,
+        width_shift_range=0.1,
+        zoom_range=0.1,
+        shear_range=0.03,
+        channel_shift_range=30,
     )
 
     g = datagen.flow(x, batch_size=1, save_to_dir=output_dir, save_prefix='', save_format='jpg')
-    for index in range(24):
+    for index in range(8):
         batch = g.next()
