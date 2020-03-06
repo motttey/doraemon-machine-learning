@@ -34,7 +34,6 @@ def main(user_id, password, user_num):
             illust_total_comments = illust_total_comments + illust.total_comments
 
             image_url = illust.meta_single_page.get('original_image_url', illust.image_urls.medium)
-            print(image_url)
 
             api.download(image_url, path=target_dir, name=str(illust.id) + '.png')
 
@@ -42,6 +41,8 @@ def main(user_id, password, user_num):
             {
                 "id": illust.id,
                 "title": illust.title,
+                "date": illust.create_date,
+                "caption": illust.caption,
                 "view": illust.total_view,
                 "bookmark": illust.total_bookmarks,
                 "comments": illust.total_comments,
@@ -67,7 +68,7 @@ def main(user_id, password, user_num):
                     print(image_url)
 
                     api.download(image_url, path=target_dir, name=str(illust.id) + '.png')
-                    
+
                     illust_count = illust_count + 1
                     illust_total_view = illust_total_view + illust.total_view
                     illust_total_bookmark = illust_total_bookmark + illust.total_bookmarks
@@ -77,6 +78,8 @@ def main(user_id, password, user_num):
                     {
                         "id": illust.id,
                         "title": illust.title,
+                        "date": illust.create_date,
+                        "caption": illust.caption,
                         "view": illust.total_view,
                         "bookmark": illust.total_bookmarks,
                         "comments": illust.total_comments,
