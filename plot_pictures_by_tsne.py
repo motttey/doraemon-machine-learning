@@ -41,13 +41,18 @@ def main():
     target_dir = './pixiv_images/'
     path = pathlib.Path(target_dir).glob('*.png')
 
-    f = codecs.open('output.json', 'r', 'utf-8')
+    f = codecs.open('output_0927.json', 'r', 'utf-8')
     json_load = json.load(f)
 
     path_list = [pathlib.Path(target_dir + str(p['id']) + '.png') for p in json_load]
 
-    # リサイズ, 配列に格納
-    images = np.concatenate([cv2.resize(cv2.imread(str(p)),(100,100)).flatten().reshape(1,-1) for p in path_list], axis=0)
+    # resize, storing to array
+    '''
+    for p in path_list:
+        print(p)
+        cv2.resize(cv2.imread(str(p)),(64,64)).flatten().reshape(1,-1)
+    '''
+    images = np.concatenate([cv2.resize(cv2.imread(str(p)),(64,64)).flatten().reshape(1,-1) for p in path_list], axis=0)
 
     # t-SNE適用
     tsne = TSNE(n_components=3)
@@ -59,9 +64,9 @@ def main():
         json_load[i]['tsne-Y'] = images_embedded[i][1].astype(float)
         json_load[i]['tsne-Z'] = images_embedded[i][2].astype(float)
 
-    f = codecs.open('output2.json', 'w', 'utf-8')
+    f = codecs.open('output_0927_2.json', 'w', 'utf-8')
     json.dump(json_load, f, ensure_ascii=False)
-    
+
     # show2DPlot(images_embedded, path_list)
     return
 
