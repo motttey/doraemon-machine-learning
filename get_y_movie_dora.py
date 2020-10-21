@@ -1,4 +1,5 @@
 import requests
+import json
 from bs4 import BeautifulSoup
 
 url_base = "https://movies.yahoo.co.jp/movie"
@@ -54,3 +55,6 @@ if __name__ == "__main__":
     movie_url_list = get_movies()
     movie_rating_list = get_rating(movie_url_list)
     print(movie_rating_list)
+
+    with open("dora_movies.json", "w", encoding= "utf-8") as f:
+        f.write(json.dumps(movie_rating_list))
