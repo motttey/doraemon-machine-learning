@@ -41,11 +41,15 @@ def show2DPlot(projected_array, path_list):
     plt.show()
     return
 
+def splited_title(title):
+    splited = title.split('\u3000')
+    return splited[1] if len(splited) > 1 else title
+
 def main():
     f = codecs.open('dora_movies.json', 'r', 'utf-8')
     movie_json = remove_duplicate(json.load(f))
 
-    title_list = [movie['title'] for movie in movie_json]
+    title_list = [ splited_title(movie['title']) for movie in movie_json]
     target_data = []
     for movie in movie_json:
         values_array = [value for key, value in movie['rate'].items()]
