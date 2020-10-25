@@ -5,6 +5,7 @@ import numpy as np
 from PIL import Image
 from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
+import umap
 import codecs
 import json
 
@@ -56,8 +57,12 @@ def main():
         target_data.append(values_array)
 
     # t-SNE適用
-    tsne = TSNE(n_components=2)
-    embedded_data = tsne.fit_transform(target_data)
+    # tsne = TSNE(n_components=2)
+    # embedded_data = tsne.fit_transform(target_data)
+
+    # UMAP適用
+    mapper = umap.UMAP(random_state=0)
+    embedded_data = mapper.fit_transform(target_data)
     print(title_list)
 
     show2DPlot(embedded_data, title_list)
