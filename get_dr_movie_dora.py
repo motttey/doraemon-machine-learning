@@ -15,7 +15,7 @@ rcParams['font.family'] = 'sans-serif'
 rcParams['font.sans-serif'] = ['Hiragino Maru Gothic Pro', 'Noto Sans CJK JP']
 
 def remove_duplicate(movie_json):
-    titles = []
+    titles = ['STAND BY ME ドラえもん 2'] # SBM2はレビューがないので除去する
     temp = []
     for movie in movie_json:
         if movie['title'] not in titles:
@@ -63,6 +63,11 @@ def main():
     # UMAP適用
     mapper = umap.UMAP(random_state=0)
     embedded_data = mapper.fit_transform(target_data)
+
+    # PCA適用
+    # pca = PCA(n_components=2)
+    # embedded_data = pca.fit_transform(target_data)
+
     print(title_list)
 
     show2DPlot(embedded_data, title_list)
