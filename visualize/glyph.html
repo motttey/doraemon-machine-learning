@@ -7,7 +7,6 @@
     <title>D3 Star Glyph</title>
   </head>
   <body>
-    <h1>D3 Star Glyph</h1>
     <div id="star_glyph_div">
       <svg id="star_glyph"></svg>
     </div>
@@ -19,6 +18,7 @@
   <script>
     const width = 800;
     const height = 800;
+    const duration = 500;
     const glyph_size = 20;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
@@ -34,8 +34,13 @@
     const svg = d3
       .select("#star_glyph_div")
       .select("svg")
-      .attr("width", width)
+      .attr("width", width + 200)
       .attr("height", height);
+
+    const tooltip = svg
+      .append("text")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
 
     const data = setUp()
       .then((data) => {
@@ -49,11 +54,6 @@
       const labels = data
         .map((d) => d["species"])
         .filter((d, i, arr) => arr.indexOf(d) === i);
-
-      const g = svg
-        .append("g")
-        .attr("transform",
-          "translate(" + margin.left + "," + margin.top + ")");
 
       const minMaxList = target_columns.map((c, i) => {
         return new Array(
@@ -123,7 +123,22 @@
           .attr("transform",
             "translate("
               + globalXScale(d[0]) + ","
-              + globalYScale(d[1]) + ")");
+              + globalYScale(d[1]) + ")")
+          .on("mouseover", (event) => {
+            tooltip.transition()
+              .duration(duration)
+              .attr("transform", "translate("
+                + (event.pageX) + ","
+                + (event.pageY - 4) + ")")
+              .style("opacity", 1)
+              .style("font-size", "8px")
+              .text(data[i].name);
+            })
+          .on("mouseout", () => {
+             tooltip.transition()
+               .duration(duration)
+               .style("opacity", 0);
+          });
 
         const vertices = [];
         target_columns.forEach((c, j) => {
@@ -134,6 +149,7 @@
         });
 
         g.append("path")
+          .attr("class", "glyph")
           .attr("d", line(vertices))
           .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["species"])])
           .attr("opacity", 0.3);
