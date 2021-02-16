@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://unpkg.com/@saehrimnir/druidjs"></script>
+    <meta charset="utf-8"/>
+    <title>D3 Star Glyph</title>
+  </head>
+  <body>
+    <h1>D3 Star Glyph</h1>
+    <div id="star_glyph_div">
+      <svg id="star_glyph"></svg>
+    </div>
+  </body>
+
+  <style>
+  </style>
+
+  <script>
+    const width = 800;
+    const height = 800;
+    const glyph_size = 20;
+    const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+
+    const target_columns = [
+      "物語",
+      "配役",
+      "演出",
+      "映像",
+      "音楽"
+    ];
+
+    // SVG要素を追加
+    const svg = d3
+      .select("#star_glyph_div")
+      .select("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    const data = setUp()
+      .then((data) => {
+        // setAxis(data);
+        execDR(data);
+      });
+
+    function execDR(data) {
+      console.log(data);
+
+      const labels = data
+        .map((d) => d["species"])
+        .filter((d, i, arr) => arr.indexOf(d) === i);
+
+      const g = svg
+        .append("g")
+        .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+      const minMaxList = target_columns.map((c, i) => {
+        return new Array(
+          d3.min(data, (d) => { return d[c]; }),
+          d3.max(data, (d) => { return d[c]; })
+        )
+      });
+
+      const data_matrix = data.map((d) => {
+        return target_columns.map((c, i) => {
+          // 正規化
+          return (minMaxList[i][1] -  d[c])/(minMaxList[i][1] - minMaxList[i][0]);
+        });
+      });
+
+      let matrix = druid.Matrix.from(data_matrix);
+      const pca = druid["PCA"];
+      const dr = new pca(matrix);
+      const result = dr.transform().to2dArray;
+
+      const xMin = d3.min(result, (d) => d[0]);
+      const xMax = d3.max(result, (d) => d[0]);
+
+      const yMin = d3.min(result, (d) => d[1]);
+      const yMax = d3.max(result, (d) => d[1]);
+
+      let globalXScale = d3.scaleLinear()
+        .domain([ xMin, xMax ])
+        .range([ margin.left , width - margin.right ]);
+
+      let globalYScale = d3.scaleLinear()
+        .domain([ yMin, yMax ])
+        .range([ margin.top , height - margin.bottom ]);
+
+      svg.append("g")
+        .attr("transform", "translate(0," + (height - margin.bottom) + ")")
+        .call(d3.axisBottom(globalXScale));
+
+      svg.append("g")
+        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+        .call(d3.axisLeft(globalYScale));
+
+      const numColumns = target_columns.length;
+      const starScaleList = target_columns.map((c, i) => {
+        let xScale = d3.scaleLinear()
+          .domain([ minMaxList[i][0], minMaxList[i][1] ])
+          .range([ 0, glyph_size * Math.cos(getRadius(numColumns, i)) ]);
+
+        let yScale = d3.scaleLinear()
+          .domain([ minMaxList[i][0], minMaxList[i][1] ])
+          .range([ 0, glyph_size * Math.sin(getRadius(numColumns, i)) ]);
+
+        return {
+          "xScale": xScale,
+          "yScale": yScale
+        }
+      });
+
+      let line = d3.line()
+          // .curve (d3.curveCatmullRomClosed)
+          .x (function(d) { return d[0]; })
+          .y (function(d) { return d[1]; });
+
+      result.forEach((d, i) => {
+        const g = svg
+          .append("g")
+          .attr("transform",
+            "translate("
+              + globalXScale(d[0]) + ","
+              + globalYScale(d[1]) + ")");
+
+        const vertices = [];
+        target_columns.forEach((c, j) => {
+          vertices.push([
+            starScaleList[j].xScale(data[i][c]),
+            starScaleList[j].yScale(data[i][c])
+          ]);
+        });
+
+        g.append("path")
+          .attr("d", line(vertices))
+          .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["species"])])
+          .attr("opacity", 0.3);
+      });
+    }
+
+    function getRadius(max, i) {
+      return ((360 / max) * i) * Math.PI / 180
+    }
+
+    function setAxis(data) {
+      const g = svg
+        .append("g")
+        .attr("transform",
+          "translate(" + margin.top + "," + margin.left + ")");
+
+      const vertices = [];
+      const numColumns = target_columns.length;
+      target_columns.forEach((c, i) => {
+
+        const minVal = d3.min(data, (d) => {
+          return d[c];
+        });
+        const maxVal = d3.max(data, (d) => {
+          return d[c];
+        });
+
+        let xScale = d3.scaleLinear()
+          .domain([ minVal, maxVal ])
+          .range([ 0, glyph_size * Math.cos(getRadius(numColumns, i)) ]);
+
+        let yScale = d3.scaleLinear()
+          .domain([ minVal, maxVal ])
+          .range([ 0, glyph_size * Math.sin(getRadius(numColumns, i)) ]);
+
+        g.append("line")
+          .attr("x1", xScale(minVal))
+          .attr("y1", yScale(minVal))
+          .attr("x2", xScale(maxVal))
+          .attr("y2", yScale(maxVal))
+          .attr("stroke","gray")
+          .attr("stroke-width", 1);
+
+        vertices.push([xScale(data[0][c]), yScale(data[0][c])]);
+      });
+
+      let line = d3.line()
+          // .curve (d3.curveCatmullRomClosed)
+          .x (function(d) { return d[0]; })
+          .y (function(d) { return d[1]; });
+
+      g.append("path")
+        .attr("d", line(vertices))
+        .attr("fill", "darkred")
+        .attr("stroke", "red")
+        .attr("opacity", "0.5");
+    }
+
+    async function setUp() {
+      const dora_data = await d3.json("./dora_movies.json");
+      console.log(target_columns);
+
+      return dora_data
+        .map((d) => {
+          return new Object(
+            {
+              name: d["title"],
+              "物語": parseFloat(d.rate[target_columns[0]]),
+              "配役": parseFloat(d.rate[target_columns[1]]),
+              "演出": parseFloat(d.rate[target_columns[2]]),
+              "映像": parseFloat(d.rate[target_columns[3]]),
+              "音楽": parseFloat(d.rate[target_columns[4]]),
+            }
+          )
+        })
+        .filter((d, i, arr) => {
+          return arr.map((d) => d.name)
+            .indexOf(d.name) === i
+        });
+    }
+  </script>
+</html>

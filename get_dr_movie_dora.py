@@ -50,7 +50,7 @@ def main():
     f = codecs.open('dora_movies.json', 'r', 'utf-8')
     movie_json = remove_duplicate(json.load(f))
 
-    title_list = [ splited_title(movie['title']) for movie in movie_json]
+    title_list = [ splited_title(movie['title']) for movie in movie_json ]
     target_data = []
     for movie in movie_json:
         values_array = [value for key, value in movie['rate'].items()]
