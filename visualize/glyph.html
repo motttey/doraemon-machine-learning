@@ -52,7 +52,7 @@
       console.log(data);
 
       const labels = data
-        .map((d) => d["species"])
+        .map((d) => d["type"])
         .filter((d, i, arr) => arr.indexOf(d) === i);
 
       const minMaxList = target_columns.map((c, i) => {
@@ -151,7 +151,7 @@
         g.append("path")
           .attr("class", "glyph")
           .attr("d", line(vertices))
-          .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["species"])])
+          .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["type"])])
           .attr("opacity", 0.3);
       });
     }
@@ -208,15 +208,30 @@
         .attr("opacity", "0.5");
     }
 
+    function getMovieType(title) {
+      if (title.indexOf("映画ドラえもん") >= 0)
+        return "わさドラ"
+      else if (title.indexOf("ドラえもん　") >= 0)
+        return "大山ドラ"
+      else if (
+        title.indexOf("ドラミ") >= 0
+        || title.indexOf("ドラえもんズ") >= 0
+      )
+        return "ドラえもんズ"
+      else if (title.indexOf("STAND") >= 0)
+        return "SBMドラ"
+      else
+        return "unknown"
+    }
+
     async function setUp() {
       const dora_data = await d3.json("./dora_movies.json");
-      console.log(target_columns);
-
       return dora_data
         .map((d) => {
           return new Object(
             {
               name: d["title"],
+              type: getMovieType(d["title"]),
               "物語": parseFloat(d.rate[target_columns[0]]),
               "配役": parseFloat(d.rate[target_columns[1]]),
               "演出": parseFloat(d.rate[target_columns[2]]),
