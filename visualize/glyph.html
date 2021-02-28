@@ -59,6 +59,8 @@
         .map((d) => d["type"])
         .filter((d, i, arr) => arr.indexOf(d) === i);
 
+      createLegends(labels);
+
       const minMaxList = target_columns.map((c, i) => {
         return new Array(
           d3.min(data, (d) => { return d[c]; }),
@@ -158,7 +160,13 @@
           .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["type"])])
           .attr("opacity", 0.3);
       });
+    }
 
+    function getRadius(max, i) {
+      return ((360 / max) * i) * Math.PI / 180
+    }
+
+    function createLegends(labels) {
       labelGroup.selectAll(".labelDots")
         .data(labels)
         .enter()
@@ -180,10 +188,6 @@
           .text((d) => d)
           .attr("text-anchor", "left")
           .style("alignment-baseline", "middle");
-    }
-
-    function getRadius(max, i) {
-      return ((360 / max) * i) * Math.PI / 180
     }
 
     function setAxis(data) {
