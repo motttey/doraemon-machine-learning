@@ -19,7 +19,7 @@
     const width = 800;
     const height = 800;
     const duration = 500;
-    const glyph_size = 20;
+    const glyph_size = 25;
     const margin = { top: 50, right: 50, bottom: 50, left: 50 };
 
     const target_columns = [
@@ -41,6 +41,10 @@
       .append("text")
       .attr("class", "tooltip")
       .style("opacity", 0);
+
+    const labelGroup = svg
+      .append("g")
+      .attr("class", "label");
 
     const data = setUp()
       .then((data) => {
@@ -154,6 +158,28 @@
           .attr("fill", d3.schemeCategory10[labels.indexOf(data[i]["type"])])
           .attr("opacity", 0.3);
       });
+
+      labelGroup.selectAll(".labelDots")
+        .data(labels)
+        .enter()
+        .append("circle")
+          .attr("cx", width)
+          .attr("cy", (d,i) => margin.top + i * glyph_size)
+          .attr("class", "labelDots")
+          .attr("r", 7)
+          .style("fill", (d) => d3.schemeCategory10[labels.indexOf(d)]);
+
+      labelGroup.selectAll(".labelText")
+        .data(labels)
+        .enter()
+        .append("text")
+          .attr("x", width + 10)
+          .attr("y", (d,i) => margin.top + i * glyph_size)
+          .attr("class", "labelText")
+          .style("fill", (d) => d3.schemeCategory10[labels.indexOf(d)])
+          .text((d) => d)
+          .attr("text-anchor", "left")
+          .style("alignment-baseline", "middle");
     }
 
     function getRadius(max, i) {
