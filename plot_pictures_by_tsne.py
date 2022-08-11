@@ -38,7 +38,7 @@ def show2DPlot(projected_array, path_list):
     plt.savefig('output_tsne_col.png')
 
 def main():
-    target_dir = './pixiv_images/'
+    target_dir = './pixiv_images/thumb'
     path = pathlib.Path(target_dir).glob('*.png')
 
     f = codecs.open('output_0927.json', 'r', 'utf-8')
