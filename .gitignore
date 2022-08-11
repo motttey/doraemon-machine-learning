@@ -107,6 +107,9 @@ venv.bak/
 /dd
 /doraimages_new
 
+# output files 
+*.json
+
 # output image
 *.png
 /output_imgs
