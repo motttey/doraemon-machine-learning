@@ -112,4 +112,5 @@ venv.bak/
 
 # output image
 *.png
+*.jpg
 /output_imgs
