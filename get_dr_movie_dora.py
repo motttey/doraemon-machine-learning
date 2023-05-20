@@ -53,16 +53,18 @@ def main():
     title_list = [ splited_title(movie['title']) for movie in movie_json ]
     target_data = []
     for movie in movie_json:
-        values_array = [value for key, value in movie['rate'].items()]
+        values_array = [value for _, value in movie['rate'].items()]
         target_data.append(values_array)
 
+    print(target_data)
     # t-SNE適用
-    # tsne = TSNE(n_components=2)
-    # embedded_data = tsne.fit_transform(target_data)
+    tsne = TSNE(n_components=2)
+    embedded_data = tsne.fit_transform(target_data)
 
     # UMAP適用
-    mapper = umap.UMAP(random_state=0)
-    embedded_data = mapper.fit_transform(target_data)
+    # mapper = umap.UMAP(random_state=0)
+    # print(target_data)
+    # embedded_data = mapper.fit_transform(target_data)
 
     # PCA適用
     # pca = PCA(n_components=2)

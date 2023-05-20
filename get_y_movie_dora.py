@@ -2,7 +2,7 @@ import requests
 import json
 from bs4 import BeautifulSoup
 
-url_base = "https://movies.yahoo.co.jp/movie"
+url_base = "https://movies.yahoo.co.jp"
 def get_rating(movie_url_list):
     movie_rating_list = []
     for movie_url in movie_url_list:
@@ -37,17 +37,19 @@ def get_movies():
           "query" : "ドラえもん",
           "page" : i,
         }
-        r = requests.get(url_base, params=params)
+        r = requests.get(url_base + '/find', params=params)
         if r.text == requests.codes.ok:
             break;
         bs = BeautifulSoup(r.text, "html.parser")
 
-        movies = bs.findAll("div", {"class": "thumbnail__caption"})
+        movies = bs.findAll("div", {"class": "riff-mt-3"})
         for movie in movies:
+            if (movie.find("a") is None): continue
             m_url = movie.find("a").get("href")
-            title = movie.find("h3").get("title")
+            title = movie.find("a").get_text()
 
             movie_url_list.append(m_url)
+            print(m_url)
             print(title)
     return movie_url_list
 
