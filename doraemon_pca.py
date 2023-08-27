@@ -1,17 +1,9 @@
-import os
 import numpy as np
-from sklearn import (manifold, datasets, decomposition, ensemble,
-                     discriminant_analysis, random_projection)
+from sklearn import (manifold, decomposition)
 import matplotlib.pyplot as plt
-from matplotlib.offsetbox import (TextArea, DrawingArea, OffsetImage,
-                                  AnnotationBbox)
+from matplotlib.offsetbox import (OffsetImage, AnnotationBbox)
 from PIL import Image
-import argparse
-import math
-import csv
-import json
 import glob
-import random
 
 def show2DPlot(projected_array, image_array, method_name):
     x = []
@@ -20,11 +12,11 @@ def show2DPlot(projected_array, image_array, method_name):
         x.append(point[0])
         y.append(point[1])
 
-    fig,ax = plt.subplots(figsize=(12,8))
+    _, ax = plt.subplots(figsize=(12,8))
     ax.set_xlabel('')
     ax.set_ylabel('')
 
-    scatterplot = ax.scatter(x,y)
+    ax.scatter(x,y)
 
     for i in range(len(projected_array)):
         aimg = image_array[i]
@@ -36,7 +28,6 @@ def show2DPlot(projected_array, image_array, method_name):
     plt.xlabel(method_name + ' 1')
     plt.ylabel(method_name + ' 2')
     plt.legend(loc='lower left')
-    # plt.show()
 
     plt.savefig('output' + method_name + '.png')
 
