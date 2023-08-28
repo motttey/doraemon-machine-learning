@@ -109,6 +109,7 @@ venv.bak/
 
 # output files 
 *.json
+*.jsonl
 *.csv
 
 # output image
