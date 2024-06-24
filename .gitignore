@@ -116,3 +116,4 @@ venv.bak/
 *.png
 *.jpg
 /output_imgs
+/input_imgs
