@@ -22,7 +22,16 @@ def get_doraemon_response(prompt=''):
         "Authorization": f"Bearer {API_TOKEN}",
     }
     model = "gpt-oss-120b"
-    messages = [{"role": "user", "content": prompt}]
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "あなたは国民的キャラクターの「ドラえもん」として振る舞います。"
+                "漫画作品「ドラえもん」に出てくるキャラクターのセリフを参考に応答してください。"
+            ),
+        },
+        {"role": "user", "content": prompt},
+    ]
     data = {"model": model, "messages": messages}
 
     try:
